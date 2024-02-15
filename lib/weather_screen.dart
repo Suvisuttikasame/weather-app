@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:weather_app/additional_info_item.dart';
+import 'package:weather_app/hourly_forecast_item.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});
@@ -82,58 +84,64 @@ class WeatherScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    HourlyForecastItem(),
-                    HourlyForecastItem(),
-                    HourlyForecastItem(),
-                    HourlyForecastItem(),
+                    HourlyForecastItem(
+                      time: '10.00',
+                      icon: Icons.cloud,
+                      value: '24.55 cel',
+                    ),
+                    HourlyForecastItem(
+                      time: '10.00',
+                      icon: Icons.cloud,
+                      value: '24.55 cel',
+                    ),
+                    HourlyForecastItem(
+                      time: '10.00',
+                      icon: Icons.cloud,
+                      value: '24.55 cel',
+                    ),
+                    HourlyForecastItem(
+                      time: '10.00',
+                      icon: Icons.cloud,
+                      value: '24.55 cel',
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
-              Placeholder(
-                fallbackHeight: 150,
+              const Text(
+                'additional information',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                ),
               ),
+              const SizedBox(
+                height: 16,
+              ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  AdditionalInfoItem(
+                    icon: Icons.water_drop,
+                    label: 'humidity',
+                    value: '91',
+                  ),
+                  AdditionalInfoItem(
+                    icon: Icons.air,
+                    label: 'wind speed',
+                    value: '7.76',
+                  ),
+                  AdditionalInfoItem(
+                    icon: Icons.umbrella,
+                    label: 'pressure',
+                    value: '1006',
+                  ),
+                ],
+              )
             ],
           ),
         ));
-  }
-}
-
-class HourlyForecastItem extends StatelessWidget {
-  const HourlyForecastItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-        child: const Column(
-          children: [
-            Text(
-              '00:30',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Icon(
-              Icons.cloud,
-              size: 32,
-            ),
-            Text(
-              '32.00 cel',
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
