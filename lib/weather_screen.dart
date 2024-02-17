@@ -23,7 +23,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Future<Map<String, dynamic>> getForecastWeather() async {
     try {
       final res = await http.get(Uri.parse(
-          'https://api.openweathermap.org/data/2.5/forecast?q=London,uk&APPID=9066a1eb3b2c9dcc1da6a16cb9f147b5'));
+          'https://api.openweathermap.org/data/2.5/forecast?q=Bangkok,th&APPID=9066a1eb3b2c9dcc1da6a16cb9f147b5'));
       final json = jsonDecode(res.body);
 
       if (json['cod'] != '200') {
@@ -63,13 +63,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 );
               }
 
-              final currentData = snapshort.data!['list'][0]['main']['temp'];
-              final skyStatus =
-                  snapshort.data!['list'][0]['weather'][0]['main'];
-              final currentPresure =
-                  snapshort.data!['list'][0]['main']['pressure'];
-              final windSpeed = snapshort.data!['list'][0]['wind']['speed'];
-              final humidity = snapshort.data!['list'][0]['main']['humidity'];
+              final data = snapshort.data!;
+
+              final currentData = data['list'][0]['main']['temp'];
+              final skyStatus = data['list'][0]['weather'][0]['main'];
+              final currentPresure = data['list'][0]['main']['pressure'];
+              final windSpeed = data['list'][0]['wind']['speed'];
+              final humidity = data['list'][0]['main']['humidity'];
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -132,30 +132,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     const SizedBox(
                       height: 16,
                     ),
-                    const SingleChildScrollView(
+                    SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          HourlyForecastItem(
-                            time: '10.00',
-                            icon: Icons.cloud,
-                            value: '24.55 cel',
-                          ),
-                          HourlyForecastItem(
-                            time: '10.00',
-                            icon: Icons.cloud,
-                            value: '24.55 cel',
-                          ),
-                          HourlyForecastItem(
-                            time: '10.00',
-                            icon: Icons.cloud,
-                            value: '24.55 cel',
-                          ),
-                          HourlyForecastItem(
-                            time: '10.00',
-                            icon: Icons.cloud,
-                            value: '24.55 cel',
-                          ),
+                          for (int i = 1; i < data['list'].length; i++)
+                            HourlyForecastItem(
+                              time: data['list'][i]['dt'].toString(),
+                              icon: data['list'][i]['weather'][0]['main'] ==
+                                          'Clouds' ||
+                                      data['list'][0]['weather'][0]['main'] ==
+                                          'Rain'
+                                  ? Icons.cloud
+                                  : Icons.sunny,
+                              value: '${data['list'][i]['main']['temp']} K',
+                            ),
                         ],
                       ),
                     ),
