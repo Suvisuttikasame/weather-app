@@ -66,6 +66,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
               final currentData = snapshort.data!['list'][0]['main']['temp'];
               final skyStatus =
                   snapshort.data!['list'][0]['weather'][0]['main'];
+              final currentPresure =
+                  snapshort.data!['list'][0]['main']['pressure'];
+              final windSpeed = snapshort.data!['list'][0]['wind']['speed'];
+              final humidity = snapshort.data!['list'][0]['main']['humidity'];
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -119,7 +123,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       height: 20,
                     ),
                     const Text(
-                      'weather forecast',
+                      'hourly forecast',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 32,
@@ -168,23 +172,23 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     const SizedBox(
                       height: 16,
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         AdditionalInfoItem(
                           icon: Icons.water_drop,
                           label: 'humidity',
-                          value: '91',
+                          value: humidity.toString(),
                         ),
                         AdditionalInfoItem(
                           icon: Icons.air,
                           label: 'wind speed',
-                          value: '7.76',
+                          value: windSpeed.toString(),
                         ),
                         AdditionalInfoItem(
                           icon: Icons.umbrella,
                           label: 'pressure',
-                          value: '1006',
+                          value: currentPresure.toString(),
                         ),
                       ],
                     )
