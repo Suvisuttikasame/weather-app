@@ -15,11 +15,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getForecastWeather();
-  }
+  late Future<Map<String, dynamic>> weather;
 
   Future<Map<String, dynamic>> getForecastWeather() async {
     try {
@@ -37,6 +33,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    weather = getForecastWeather();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -46,11 +48,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.refresh))
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    weather = getForecastWeather();
+                  });
+                },
+                icon: const Icon(Icons.refresh)),
           ],
         ),
         body: FutureBuilder(
-            future: getForecastWeather(),
+            future: weather,
             builder: (context, snapshort) {
               if (snapshort.connectionState == ConnectionState.waiting) {
                 return const Center(
