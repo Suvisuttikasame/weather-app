@@ -14,20 +14,14 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  double temp = 0;
-  bool isLoading = false;
-
   @override
   void initState() {
     super.initState();
     getForecastWeather();
   }
 
-  Future getForecastWeather() async {
+  Future<Map<String, dynamic>> getForecastWeather() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
       final res = await http.get(Uri.parse(
           'https://api.openweathermap.org/data/2.5/forecast?q=London,uk&APPID=9066a1eb3b2c9dcc1da6a16cb9f147b5'));
       final json = jsonDecode(res.body);
@@ -35,11 +29,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       if (json['cod'] != '200') {
         throw 'an unexpected error occur';
       }
-
-      setState(() {
-        temp = json['list'][0]['main']['temp'];
-        isLoading = false;
-      });
+      return json;
     } catch (e) {
       throw e.toString();
     }
@@ -58,9 +48,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
             IconButton(onPressed: () {}, icon: const Icon(Icons.refresh))
           ],
         ),
-        body: isLoading
-            ? const RefreshProgressIndicator()
-            : Padding(
+        body: FutureBuilder(
+            future: getForecastWeather(),
+            builder: (context, snapshort) {
+              if (snapshort.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshort.hasError) {
+                final err = snapshort.error;
+                return Center(
+                  child: Text(err.toString()),
+                );
+              }
+
+              final currentData = snapshort.data!['list'][0]['main']['temp'];
+              final skyStatus =
+                  snapshort.data!['list'][0]['weather'][0]['main'];
+              return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +89,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               child: Column(
                                 children: [
                                   Text(
-                                    '$temp K',
+                                    '$currentData K',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 32,
@@ -92,13 +98,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const SizedBox(
                                     height: 16,
                                   ),
-                                  const Icon(
-                                    Icons.cloud,
+                                  Icon(
+                                    skyStatus == 'Clouds' || skyStatus == 'Rain'
+                                        ? Icons.cloud
+                                        : Icons.sunny,
                                     size: 64,
                                   ),
-                                  const Text(
-                                    'rain',
-                                    style: TextStyle(fontSize: 20),
+                                  Text(
+                                    skyStatus,
+                                    style: const TextStyle(fontSize: 20),
                                   )
                                 ],
                               ),
@@ -182,6 +190,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     )
                   ],
                 ),
-              ));
+              );
+            }));
   }
 }
