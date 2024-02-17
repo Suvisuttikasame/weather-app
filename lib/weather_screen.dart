@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:weather_app/additional_info_item.dart';
 import 'package:weather_app/hourly_forecast_item.dart';
 
@@ -132,23 +133,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     const SizedBox(
                       height: 16,
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (int i = 1; i < data['list'].length; i++)
-                            HourlyForecastItem(
-                              time: data['list'][i]['dt'].toString(),
-                              icon: data['list'][i]['weather'][0]['main'] ==
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            final time = DateTime.parse(
+                                data['list'][index + 1]['dt_txt']);
+                            final timeFormat = DateFormat('j').format(time);
+                            return HourlyForecastItem(
+                              time: timeFormat,
+                              icon: data['list'][index + 1]['weather'][0]
+                                              ['main'] ==
                                           'Clouds' ||
                                       data['list'][0]['weather'][0]['main'] ==
                                           'Rain'
                                   ? Icons.cloud
                                   : Icons.sunny,
-                              value: '${data['list'][i]['main']['temp']} K',
-                            ),
-                        ],
-                      ),
+                              value:
+                                  '${data['list'][index + 1]['main']['temp']} K',
+                            );
+                          }),
                     ),
                     const SizedBox(
                       height: 20,
